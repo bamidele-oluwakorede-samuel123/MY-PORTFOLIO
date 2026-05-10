@@ -1,5 +1,4 @@
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body { background: #0a0a0a; color: #f5f5f0; font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
 
@@ -48,13 +47,19 @@
     .project-card:hover { border-color: rgba(245,245,240,0.5); transform: translateY(-4px); }
 
     /* WhatsApp bubble */
-    .wa-bubble { position: fixed; bottom: 28px; right: 28px; z-index: 200; width: 56px; height: 56px; background: #f5f5f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 24px rgba(0,0,0,0.5); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
+    .wa-bubble { position: fixed; bottom: 20px; right: 20px; z-index: 200; width: 52px; height: 52px; background: #f5f5f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 24px rgba(0,0,0,0.5); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
     .wa-bubble:hover { transform: scale(1.1); box-shadow: 0 8px 32px rgba(0,0,0,0.6); }
 
-    /* Back to top */
-    .back-top { position: fixed; bottom: 28px; left: 28px; z-index: 200; width: 44px; height: 44px; border: 1px solid rgba(245,245,240,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; opacity: 0; }
+    /* Back to top — hidden on mobile to avoid overlap with WhatsApp */
+    .back-top { position: fixed; bottom: 20px; left: 20px; z-index: 200; width: 44px; height: 44px; border: 1px solid rgba(245,245,240,0.2); border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; opacity: 0; background: transparent; }
     .back-top.visible { opacity: 1; }
     .back-top:hover { border-color: #f5f5f0; background: rgba(245,245,240,0.08); }
+    @media (min-width: 768px) { .back-top { display: flex; } }
+
+    /* Mobile: reduce section vertical padding */
+    @media (max-width: 767px) {
+      .section-py { padding-top: 4rem; padding-bottom: 4rem; }
+    }
 
     /* Section reveal */
     .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.8s ease, transform 0.8s ease; }
@@ -75,3 +80,4 @@
 
     /* Counter */
     .counter-num { font-variant-numeric: tabular-nums; }
+    

@@ -97,56 +97,63 @@
     backTop.classList.toggle('visible', window.scrollY > 400);
   });
 
+
   // ─────────────────────────────────────────────
-  // ✏️  EMAILJS CONFIGURATION — edit these 3 values
-  // Go to https://www.emailjs.com → Account → API Keys
+  // ✏️  WEB3FORMS CONFIGURATION — only 1 thing to edit
+  // Steps:
+  //   1. Go to https://web3forms.com
+  //   2. Enter your email address
+  //   3. Check your inbox for the Access Key they send you
+  //   4. Paste that key below to replace YOUR_ACCESS_KEY_HERE
   // ─────────────────────────────────────────────
-  const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // ✏️ Replace with your Public Key
-  const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // ✏️ Replace with your Service ID
-  const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // ✏️ Replace with your Template ID
+  const WEB3FORMS_ACCESS_KEY = 'b830595a-83f0-4f57-a137-7549c27dd367'; // ✏️ Only replace this
   // ─────────────────────────────────────────────
 
-  // Initialise EmailJS with your public key
-  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-
-  // Form submit handler
   async function handleSubmit(e) {
     e.preventDefault();
 
-    const form    = e.target;
-    const btn     = form.querySelector('button[type="submit"]');
-    const msg     = document.getElementById('form-msg');
+    const form = e.target;
+    const btn  = form.querySelector('button[type="submit"]');
+    const msg  = document.getElementById('form-msg');
 
-    // Collect form values
-    // NOTE: These names must match your EmailJS template variables exactly.
-    // Default template variables used here: {{from_name}}, {{from_email}},
-    // {{subject}}, {{budget}}, {{message}}
-    const templateParams = {
-      from_name:  document.getElementById('name').value.trim(),
-      from_email: document.getElementById('email').value.trim(),
-      subject:    document.getElementById('subject').value.trim() || 'No subject',
-      budget:     document.getElementById('budget').value || 'Not specified',
-      message:    document.getElementById('message').value.trim(),
+    // Show loading state
+    const originalText  = btn.textContent;
+    btn.textContent     = 'Sending...';
+    btn.disabled        = true;
+    btn.style.opacity   = '0.6';
+
+    // Build the payload — Web3Forms reads these field names automatically
+    const payload = {
+      access_key:   WEB3FORMS_ACCESS_KEY,
+      subject:      document.getElementById('subject').value.trim() || 'New Portfolio Enquiry',
+      from_name:    document.getElementById('name').value.trim(),
+      email:        document.getElementById('email').value.trim(),
+      budget:       document.getElementById('budget').value || 'Not specified',
+      message:      document.getElementById('message').value.trim(),
+      botcheck:     '',  // honeypot spam protection
     };
 
-    // Show loading state on button
-    const originalText = btn.textContent;
-    btn.textContent = 'Sending...';
-    btn.disabled    = true;
-    btn.style.opacity = '0.6';
-
     try {
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+      const res  = await fetch('https://api.web3forms.com/submit', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body:    JSON.stringify(payload),
+      });
+      const data = await res.json();
 
-      // Success
-      msg.textContent = '✓ Message sent! I\'ll get back to you within 24 hours.';
-      msg.className   = 'font-mono text-xs tracking-wider mt-4 text-chalk/70';
-      form.reset();
+      if (data.success) {
+        // ✅ Success
+        msg.textContent = '✓ Message received! I\'ll get back to you within 24 hours.';
+        msg.className   = 'font-mono text-xs tracking-wider mt-4 text-chalk/70';
+        form.reset();
+      } else {
+        // ❌ Web3Forms returned an error
+        throw new Error(data.message || 'Submission failed');
+      }
 
-    } catch (error) {
-      // Error
-      console.error('EmailJS error:', error);
-      msg.textContent = '✗ Something went wrong. Please try WhatsApp or email me directly.';
+    } catch (err) {
+      console.error('Web3Forms error:', err);
+      msg.textContent = '✗ Something went wrong. Please reach me via WhatsApp or email directly.';
       msg.className   = 'font-mono text-xs tracking-wider mt-4 text-red-400';
     }
 

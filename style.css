@@ -73,7 +73,12 @@
 
     /* Mobile menu */
     #mobile-menu { display: none; }
-    #mobile-menu.open { display: flex; }
+    #mobile-menu.open { display: flex; flex-direction: column; }
+
+    /* Select field */
+    select { background: transparent; border: 1px solid rgba(245,245,240,0.15); color: #f5f5f0; outline: none; font-family: 'DM Sans', sans-serif; width: 100%; padding: 14px 16px; border-radius: 2px; transition: border-color 0.2s; -webkit-appearance: none; appearance: none; }
+    select option { background: #0a0a0a; color: #f5f5f0; }
+    select:focus { border-color: rgba(245,245,240,0.6); }
 
     /* Diagonal section divider */
     .diag { clip-path: polygon(0 0,100% 6%,100% 100%,0 100%); }
